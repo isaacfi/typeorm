@@ -9,7 +9,7 @@
     "name": "Umed Khudoiberdiev",
     "email": "pleerock.me@gmail.com"
   },
-  "main": "dist/index.js",
+  "main": "index.js",
   "browser": {
     "./browser/driver/postgres/PostgresDriver.js": "./browser/platform/BrowserDisabledDriversDummy.js",
     "./browser/driver/oracle/OracleDriver.ts": "./browser/platform/BrowserDisabledDriversDummy.js",
@@ -59,6 +59,7 @@
     "chai-as-promised": "^7.1.1",
     "del": "^3.0.0",
     "gulp": "^4.0.0",
+    "gulp-copy": "^4.0.1",
     "gulp-gzip": "^1.4.2",
     "gulp-istanbul": "^1.1.3",
     "gulp-mocha": "^6.0.0",
@@ -121,7 +122,7 @@
     "lint": "tslint -p ."
   },
   "bin": {
-    "typeorm": "dist/cli.js"
+    "typeorm": "cli.js"
   },
   "collective": {
     "type": "opencollective",

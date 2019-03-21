@@ -5,6 +5,7 @@
 import { Gulpclass, Task, SequenceTask, MergedTask } from "gulpclass";
 
 const gulp = require("gulp");
+const copyFile = require('gulp-copy');
 const del = require("del");
 const shell = require("gulp-shell");
 const tar = require('gulp-tar');
@@ -49,6 +50,24 @@ export class Gulpfile {
     @Task()
     cleanDist(cb: Function) {
         return del(["./dist/**"], cb);
+    }
+
+    /**
+     * Add package.json
+     */
+    @Task()
+    addPackageJson(cb: Function) {
+        return gulp.src('./package.json')
+            .pipe(copyFile('./build/package'))
+    }
+
+    /**
+     * Add README.md
+     */
+    @Task()
+    addReadme(cb: Function) {
+        return gulp.src('./README.md')
+            .pipe(copyFile('./build/package'))
     }
 
     /**
@@ -264,6 +283,8 @@ export class Gulpfile {
                 "packageCopyReadme",
                 "packageCopyShims"
             ],
+            "addPackageJson",
+            "addReadme",
             "compress",
             "clean"
         ];
