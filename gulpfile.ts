@@ -39,7 +39,7 @@ export class Gulpfile {
      */
     @Task()
     clean(cb: Function) {
-        return del(["./build/**", "./typeorm-0.2.15.tgz"], cb);
+        return del(["./build/**"], cb);
     }
 
     /**
@@ -73,8 +73,10 @@ export class Gulpfile {
      */
     @Task()
     createNPMPackage(cb: Function) {
-        return gulp.src("./build/package")
-            .pipe(shell(["npm pack"]), cb);
+        return gulp.src("./", { read: false })
+            .pipe(shell([
+                "cd ./build/package && npm pack ."
+            ]), cb);
     }
 
     /**
@@ -82,7 +84,7 @@ export class Gulpfile {
      */
     @Task()
     moveNPMToDist(cb: Function) {
-        return gulp.src("./typeorm-0.2.15.tgz")
+        return gulp.src("./build/package/typeorm-0.2.15.tgz")
             .pipe(gulp.dest("./dist"), cb);
     }
 
