@@ -1536,6 +1536,7 @@ export class SelectQueryBuilder<Entity> extends QueryBuilder<Entity> implements 
             // user does not request one we insert a dummy ORDER BY that does nothing and should
             // have no effect on the query planner or on the order of the results returned.
             // https://dba.stackexchange.com/a/193799
+            return "";
             let prefix = "";
             if ((limit || offset) && Object.keys(this.expressionMap.allOrderBys).length <= 0) {
                 prefix = " ORDER BY (SELECT NULL)";
