@@ -5,11 +5,9 @@
 import { Gulpclass, Task, SequenceTask, MergedTask } from "gulpclass";
 
 const gulp = require("gulp");
-const copyFile = require('gulp-copy');
+const copyFile = require("gulp-copy");
 const del = require("del");
 const shell = require("gulp-shell");
-const tar = require('gulp-tar');
-const gzip = require('gulp-gzip');
 const replace = require("gulp-replace");
 const rename = require("gulp-rename");
 const mocha = require("gulp-mocha");
@@ -41,7 +39,7 @@ export class Gulpfile {
      */
     @Task()
     clean(cb: Function) {
-        return del(["./build/**"], cb);
+        return del(["./build/**", "./typeorm-0.2.15.tgz"], cb);
     }
 
     /**
@@ -57,8 +55,8 @@ export class Gulpfile {
      */
     @Task()
     addPackageJson(cb: Function) {
-        return gulp.src('./package.json')
-            .pipe(copyFile('./build/package'))
+        return gulp.src("./package.json")
+            .pipe(copyFile("./build/package"));
     }
 
     /**
@@ -66,19 +64,26 @@ export class Gulpfile {
      */
     @Task()
     addReadme(cb: Function) {
-        return gulp.src('./README.md')
-            .pipe(copyFile('./build/package'))
+        return gulp.src("./README.md")
+            .pipe(copyFile("./build/package"));
     }
 
     /**
      * Create tar.gz.
      */
     @Task()
-    compress(cb: Function) {
-        return gulp.src('./build/package/*')
-            .pipe(tar('custom-typeorm.tar'))
-            .pipe(gzip())
-            .pipe(gulp.dest('./dist'), cb)
+    createNPMPackage(cb: Function) {
+        return gulp.src("./build/package")
+            .pipe(shell(["npm pack"]), cb);
+    }
+
+    /**
+     * Copy NPM package to dist
+     */
+    @Task()
+    moveNPMToDist(cb: Function) {
+        return gulp.src("./typeorm-0.2.15.tgz")
+            .pipe(gulp.dest("./dist"), cb);
     }
 
     /**
@@ -285,7 +290,8 @@ export class Gulpfile {
             ],
             "addPackageJson",
             "addReadme",
-            "compress",
+            "createNPMPackage",
+            "moveNPMToDist",
             "clean"
         ];
     }
