@@ -2,11 +2,13 @@
 ///<reference path="node_modules/@types/chai/index.d.ts"/>
 ///<reference path="node_modules/@types/mocha/index.d.ts"/>
 
-import {Gulpclass, Task, SequenceTask, MergedTask} from "gulpclass";
+import { Gulpclass, Task, SequenceTask, MergedTask } from "gulpclass";
 
 const gulp = require("gulp");
 const del = require("del");
 const shell = require("gulp-shell");
+const tar = require('gulp-tar');
+const gzip = require('gulp-gzip');
 const replace = require("gulp-replace");
 const rename = require("gulp-rename");
 const mocha = require("gulp-mocha");
@@ -42,6 +44,25 @@ export class Gulpfile {
     }
 
     /**
+     * Cleans build folder.
+     */
+    @Task()
+    cleanDist(cb: Function) {
+        return del(["./dist/**"], cb);
+    }
+
+    /**
+     * Create tar.gz.
+     */
+    @Task()
+    compress(cb: Function) {
+        return gulp.src('./build/package/*')
+            .pipe(tar('custom-typeorm.tar'))
+            .pipe(gzip())
+            .pipe(gulp.dest('./dist'), cb)
+    }
+
+    /**
      * Runs typescript files compilation.
      */
     @Task()
@@ -67,7 +88,7 @@ export class Gulpfile {
             "!./src/typeorm-model-shim.ts",
             "!./src/platform/PlatformTools.ts"
         ])
-        .pipe(gulp.dest("./build/browser/src"));
+            .pipe(gulp.dest("./build/browser/src"));
     }
 
     /**
@@ -158,10 +179,10 @@ export class Gulpfile {
             .pipe(tsProject());
 
         return [
-            tsResult.dts.pipe(gulp.dest("./dist")),
+            tsResult.dts.pipe(gulp.dest("./build/package")),
             tsResult.js
                 .pipe(sourcemaps.write(".", { sourceRoot: "", includeContent: true }))
-                .pipe(gulp.dest("./dist"))
+                .pipe(gulp.dest("./build/package"))
         ];
     }
 
@@ -171,7 +192,7 @@ export class Gulpfile {
     @Task()
     packageMoveCompiledFiles() {
         return gulp.src("./build/package/src/**/*")
-            .pipe(gulp.dest("./dist"));
+            .pipe(gulp.dest("./build/package"));
     }
 
     /**
@@ -182,7 +203,7 @@ export class Gulpfile {
         return gulp.src("./build/package/**/*.d.ts")
             .pipe(replace(`/// <reference types="node" />`, ""))
             .pipe(replace(`/// <reference types="chai" />`, ""))
-            .pipe(gulp.dest("./dist"));
+            .pipe(gulp.dest("./build/package"));
     }
 
     /**
@@ -202,7 +223,7 @@ export class Gulpfile {
     packagePreparePackageFile() {
         return gulp.src("./package.json")
             .pipe(replace("\"private\": true,", "\"private\": false,"))
-            .pipe(gulp.dest("./dist"));
+            .pipe(gulp.dest("./build/package"));
     }
 
     /**
@@ -212,7 +233,7 @@ export class Gulpfile {
     packageCopyReadme() {
         return gulp.src("./README.md")
             .pipe(replace(/```typescript([\s\S]*?)```/g, "```javascript$1```"))
-            .pipe(gulp.dest("./dist"));
+            .pipe(gulp.dest("./build/package"));
     }
 
     /**
@@ -221,7 +242,7 @@ export class Gulpfile {
     @Task()
     packageCopyShims() {
         return gulp.src(["./extra/typeorm-model-shim.js", "./extra/typeorm-class-transformer-shim.js"])
-            .pipe(gulp.dest("./dist"));
+            .pipe(gulp.dest("./build/package"));
     }
 
     /**
@@ -231,6 +252,7 @@ export class Gulpfile {
     package() {
         return [
             "clean",
+            "cleanDist",
             ["browserCopySources", "browserCopyPlatformTools", "browserCopyDisabledDriversDummy"],
             ["packageCompile", "browserCompile"],
             "packageMoveCompiledFiles",
@@ -242,6 +264,7 @@ export class Gulpfile {
                 "packageCopyReadme",
                 "packageCopyShims"
             ],
+            "compress",
             "clean"
         ];
     }
