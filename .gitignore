@@ -7,6 +7,4 @@ ormconfig.json
 ormlogs.log
 npm-debug.log
 /test/github-issues/799/tmp/*
-build/compiled/sample
-build/compiled/test
-build/compiled/gulpfile*
+build/
