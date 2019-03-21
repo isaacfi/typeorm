@@ -9,7 +9,7 @@
     "name": "Umed Khudoiberdiev",
     "email": "pleerock.me@gmail.com"
   },
-  "main": "build/compiled/src/index.js",
+  "main": "dist/index.js",
   "browser": {
     "./browser/driver/postgres/PostgresDriver.js": "./browser/platform/BrowserDisabledDriversDummy.js",
     "./browser/driver/oracle/OracleDriver.ts": "./browser/platform/BrowserDisabledDriversDummy.js",
@@ -119,7 +119,7 @@
     "lint": "tslint -p ."
   },
   "bin": {
-    "typeorm": "build/compiled/src/cli.js"
+    "typeorm": "dist/cli.js"
   },
   "collective": {
     "type": "opencollective",

@@ -158,10 +158,10 @@ export class Gulpfile {
             .pipe(tsProject());
 
         return [
-            tsResult.dts.pipe(gulp.dest("./build/package")),
+            tsResult.dts.pipe(gulp.dest("./dist")),
             tsResult.js
                 .pipe(sourcemaps.write(".", { sourceRoot: "", includeContent: true }))
-                .pipe(gulp.dest("./build/package"))
+                .pipe(gulp.dest("./dist"))
         ];
     }
 
@@ -171,7 +171,7 @@ export class Gulpfile {
     @Task()
     packageMoveCompiledFiles() {
         return gulp.src("./build/package/src/**/*")
-            .pipe(gulp.dest("./build/package"));
+            .pipe(gulp.dest("./dist"));
     }
 
     /**
@@ -182,7 +182,7 @@ export class Gulpfile {
         return gulp.src("./build/package/**/*.d.ts")
             .pipe(replace(`/// <reference types="node" />`, ""))
             .pipe(replace(`/// <reference types="chai" />`, ""))
-            .pipe(gulp.dest("./build/package"));
+            .pipe(gulp.dest("./dist"));
     }
 
     /**
@@ -202,7 +202,7 @@ export class Gulpfile {
     packagePreparePackageFile() {
         return gulp.src("./package.json")
             .pipe(replace("\"private\": true,", "\"private\": false,"))
-            .pipe(gulp.dest("./build/package"));
+            .pipe(gulp.dest("./dist"));
     }
 
     /**
@@ -212,7 +212,7 @@ export class Gulpfile {
     packageCopyReadme() {
         return gulp.src("./README.md")
             .pipe(replace(/```typescript([\s\S]*?)```/g, "```javascript$1```"))
-            .pipe(gulp.dest("./build/package"));
+            .pipe(gulp.dest("./dist"));
     }
 
     /**
@@ -221,7 +221,7 @@ export class Gulpfile {
     @Task()
     packageCopyShims() {
         return gulp.src(["./extra/typeorm-model-shim.js", "./extra/typeorm-class-transformer-shim.js"])
-            .pipe(gulp.dest("./build/package"));
+            .pipe(gulp.dest("./dist"));
     }
 
     /**
@@ -242,6 +242,7 @@ export class Gulpfile {
                 "packageCopyReadme",
                 "packageCopyShims"
             ],
+            "clean"
         ];
     }
 
